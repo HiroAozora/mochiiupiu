@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# documentation & assistant rules
+design.md
+context.md
+AGENTS.md
+CLAUDE.md
