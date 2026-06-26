@@ -21,7 +21,9 @@ export default function BottomNav({ activeTab, setActiveTab }: BottomNavProps) {
           whileTap={{ scale: 0.95 }}
           className="flex flex-col items-center justify-center w-16 h-12 cursor-pointer select-none"
         >
-          <span className={`transition-colors duration-200 ${activeTab === "formochi" ? "text-[#FF7E53]" : "text-[#5E4E46]/60"}`}>
+          <span
+            className={`transition-colors duration-200 ${activeTab === "formochi" ? "text-[#FF7E53]" : "text-[#5E4E46]/60"}`}
+          >
             <svg
               viewBox="0 0 24 24"
               width="20"
@@ -32,12 +34,22 @@ export default function BottomNav({ activeTab, setActiveTab }: BottomNavProps) {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <rect width="20" height="16" x="2" y="4" rx="2" />
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              <rect x="2" y="6" width="20" height="12" rx="3" />
+              <circle
+                cx="8.5"
+                cy="12"
+                r="1.5"
+                fill="currentColor"
+                stroke="none"
+              />
+              <path d="M16 10.5v3" />
+              <path d="M14.5 12h3" />
             </svg>
           </span>
-          <span className={`text-[10px] font-sans font-bold mt-0.5 ${activeTab === "formochi" ? "text-[#FF7E53]" : "text-[#5E4E46]/50"}`}>
-            Surat
+          <span
+            className={`text-[10px] font-sans font-bold mt-0.5 ${activeTab === "formochi" ? "text-[#FF7E53]" : "text-[#5E4E46]/50"}`}
+          >
+            Game
           </span>
         </motion.button>
 
@@ -66,7 +78,9 @@ export default function BottomNav({ activeTab, setActiveTab }: BottomNavProps) {
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </motion.button>
-          <span className={`text-[10px] font-sans font-black mt-1 ${activeTab === "sanctuary" ? "text-[#FF7E53]" : "text-[#5E4E46]/50"}`}>
+          <span
+            className={`text-[10px] font-sans font-black mt-1 ${activeTab === "sanctuary" ? "text-[#FF7E53]" : "text-[#5E4E46]/50"}`}
+          >
             Mochi
           </span>
         </div>
@@ -77,7 +91,9 @@ export default function BottomNav({ activeTab, setActiveTab }: BottomNavProps) {
           whileTap={{ scale: 0.95 }}
           className="flex flex-col items-center justify-center w-16 h-12 cursor-pointer select-none"
         >
-          <span className={`transition-colors duration-200 ${activeTab === "memories" ? "text-[#FF7E53]" : "text-[#5E4E46]/60"}`}>
+          <span
+            className={`transition-colors duration-200 ${activeTab === "memories" ? "text-[#FF7E53]" : "text-[#5E4E46]/60"}`}
+          >
             <svg
               viewBox="0 0 24 24"
               width="20"
@@ -98,8 +114,10 @@ export default function BottomNav({ activeTab, setActiveTab }: BottomNavProps) {
               <path d="M18 17h4" />
             </svg>
           </span>
-          <span className={`text-[10px] font-sans font-bold mt-0.5 ${activeTab === "memories" ? "text-[#FF7E53]" : "text-[#5E4E46]/50"}`}>
-            Memori
+          <span
+            className={`text-[10px] font-sans font-bold mt-0.5 ${activeTab === "memories" ? "text-[#FF7E53]" : "text-[#5E4E46]/50"}`}
+          >
+            Momen²
           </span>
         </motion.button>
       </nav>

@@ -40,3 +40,12 @@ html, body {
 .cute-shadow-nav {
   box-shadow: 0 10px 35px -5px rgba(94, 78, 70, 0.08);
 }
+
+/* Paper Sheet Styling for Lab Reports (HVS Putih) */
+.paper-sheet {
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+  position: relative;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 8px 20px rgba(94, 78, 70, 0.1) !important;
+}

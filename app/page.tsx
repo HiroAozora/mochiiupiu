@@ -6,17 +6,19 @@ import BottomNav, { TabType } from "@/components/BottomNav";
 import Sanctuary from "@/components/Sanctuary";
 import ForMochi from "@/components/ForMochi";
 import Memories from "@/components/Memories";
+import MochiSVG from "@/components/MochiSVG";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>("sanctuary");
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSleepMode, setIsSleepMode] = useState(false);
+  const [isGameActive, setIsGameActive] = useState(false);
 
   // Trigger splash screen exit after page mounts
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
-    }, 1200);
+    }, 2500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -31,7 +33,7 @@ export default function Home() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="fixed inset-0 bg-[#FFFDFB] z-50 flex flex-col items-center justify-center gap-4"
           >
-            {/* Cute bouncing dumpling loader */}
+            {/* Cute bouncing Mochi loader */}
             <motion.div
               animate={{
                 y: [0, -20, 0],
@@ -43,17 +45,36 @@ export default function Home() {
                 duration: 1,
                 ease: "easeInOut"
               }}
-              className="text-5xl select-none"
+              className="w-24 h-24 select-none flex items-center justify-center mb-2"
             >
-              🥟
+              <MochiSVG expression="happy" hideShadow />
             </motion.div>
-            <div className="text-center select-none">
-              <h2 className="font-fredoka text-xl font-bold text-[#5E4E46]">
-                Halo Mochiupiu! 🧡
-              </h2>
-              <p className="font-sans text-xs text-[#5E4E46]/60 mt-1">
-                Mochi sedang menyiapkan ruangan...
-              </p>
+            <div className="text-center select-none flex flex-col items-center">
+              <div className="text-center">
+                {Array.from("halo mochiupiuu 🧡").map((letter, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: i * 0.05,
+                      ease: [0.2, 0.65, 0.3, 0.9],
+                    }}
+                    className="inline-block font-fredoka text-xl font-bold text-[#5E4E46]"
+                  >
+                    {letter === " " ? "\u00A0" : letter}
+                  </motion.span>
+                ))}
+              </div>
+              <motion.p
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
+                className="font-sans text-xs text-[#5E4E46]/60 mt-2"
+              >
+                mochi lagi bersihin ruangan...
+              </motion.p>
             </div>
           </motion.div>
         )}
@@ -121,7 +142,7 @@ export default function Home() {
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           style={{ willChange: "transform" }}
         >
-          <ForMochi />
+          <ForMochi onGameActiveChange={setIsGameActive} />
         </motion.div>
 
         {/* Page 3: Memories (Right tab - Slides on top of Mochi) */}
@@ -143,7 +164,9 @@ export default function Home() {
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#FFF9F6]/70 via-[#FFF9F6]/30 to-transparent pointer-events-none z-[15]" />
 
       {/* Floating Bottom Navigation */}
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      {!isGameActive && (
+        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      )}
     </main>
   );
 }

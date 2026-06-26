@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import memoriesData from "../data/memories.json";
 import MochiSVG from "./MochiSVG";
@@ -14,6 +15,11 @@ interface MemoryItem {
 
 export default function Memories() {
   const [selectedVideo, setSelectedVideo] = useState<MemoryItem | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Helper to inject Cloudinary optimization parameters
   const getOptimizedVideo = (rawUrl: string) => {
@@ -26,10 +32,14 @@ export default function Memories() {
   };
 
   // Helper to auto-generate optimized thumbnail from Cloudinary video URL
-  const getAutoThumbnail = (rawUrl: string, id: number, startOffset?: string | number) => {
+  const getAutoThumbnail = (
+    rawUrl: string,
+    id: number,
+    startOffset?: string | number,
+  ) => {
     if (!rawUrl) return "";
     const url = rawUrl.replace("hhttps://", "https://");
-    
+
     // Fallback for demo/placeholder URL to make sure it looks cute with cats
     if (url.includes("demo/video/upload")) {
       const fallbacks = [
@@ -53,7 +63,10 @@ export default function Memories() {
     const offsetParam = startOffset ? `so_${startOffset},` : "";
 
     // Inject optimization and size parameters for quick mobile load
-    return thumbnailUrl.replace("/upload/", `/upload/${offsetParam}q_auto,f_auto,w_600,c_scale/`);
+    return thumbnailUrl.replace(
+      "/upload/",
+      `/upload/${offsetParam}q_auto,f_auto,w_600,c_scale/`,
+    );
   };
 
   return (
@@ -62,7 +75,7 @@ export default function Memories() {
       <div className="flex justify-center mt-6">
         <div className="bg-[#FF7E53] border-2 border-white rounded-full px-6 py-2.5 shadow-md flex items-center gap-2">
           <span className="font-fredoka text-lg font-bold text-white uppercase tracking-wider">
-            galeri mochi 🎞️
+            galeri mochi
           </span>
         </div>
       </div>
@@ -70,7 +83,11 @@ export default function Memories() {
       {/* Video List */}
       <div className="flex flex-col gap-5 w-full max-w-sm mx-auto">
         {(memoriesData as MemoryItem[]).map((video) => {
-          const autoThumbnailUrl = getAutoThumbnail(video.cloudinaryUrl, video.id, video.startOffset);
+          const autoThumbnailUrl = getAutoThumbnail(
+            video.cloudinaryUrl,
+            video.id,
+            video.startOffset,
+          );
 
           return (
             <div
@@ -128,81 +145,86 @@ export default function Memories() {
       {/* Info Card */}
       <div className="w-full max-w-sm mx-auto bg-[#FFEFE6]/80 backdrop-blur-xs border border-[#FFDFC6]/70 rounded-3xl p-4 flex flex-col items-center text-center gap-1 shadow-sm mt-2">
         <span className="text-xs font-bold text-[#FF7E53] uppercase tracking-wider font-fredoka">
-          Cloudinary Proxy Aktif
+          Tungguin video lainnya yaww
         </span>
         <p className="font-sans text-xs text-[#5E4E46]/80 leading-relaxed">
-          Semua video akan otomatis dikompres agar hemat kuota dan cepat diputar di ponsel.
+          Pokoknya isinya mochi dan tetangganya yang entah apa yang dibuatnya
+          itu 😊
         </p>
       </div>
 
-      {/* Cute Video Player Modal Overlay */}
-      <AnimatePresence>
-        {selectedVideo && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-6">
-            {/* Backdrop Blur Overlay (Optimized: No blur for smooth mobile rendering) */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedVideo(null)}
-              className="absolute inset-0 bg-[#16122c]/85"
-            />
-
-            {/* Modal Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 15 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              style={{ willChange: "transform" }}
-              className="bg-white border-4 border-[#FFDFC6] rounded-[36px] p-4 shadow-2xl relative w-full max-w-sm z-10 flex flex-col gap-4 items-center"
-            >
-              {/* Close Button */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setSelectedVideo(null)}
-                className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-[#FF7E53] border-2 border-white text-white flex items-center justify-center shadow-lg cursor-pointer hover:bg-[#ff693b] transition-colors"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </motion.button>
-
-              {/* Video Player (Maintains original aspect ratio) */}
-              <div className="w-full bg-black/5 rounded-[24px] overflow-hidden border-2 border-[#FFDFC6]/75 shadow-inner flex justify-center items-center">
-                <video
-                  src={getOptimizedVideo(selectedVideo.cloudinaryUrl)}
-                  controls
-                  autoPlay
-                  className="max-h-[60vh] w-full h-auto object-contain rounded-[22px]"
+      {/* Cute Video Player Modal Overlay rendered in Portal */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {selectedVideo && (
+              <div className="fixed inset-0 z-[60] flex items-center justify-center p-6">
+                {/* Backdrop Blur Overlay */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setSelectedVideo(null)}
+                  className="absolute inset-0 bg-[#16122c]/85"
                 />
-              </div>
 
-              {/* Memory Information Card */}
-              <div className="w-full text-center px-2 py-1 flex flex-col gap-2 items-center">
-                <h3 className="font-fredoka text-lg font-bold text-[#5E4E46] leading-snug">
-                  {selectedVideo.title}
-                </h3>
-                {/* Cute Mochi SVG icon without shadow */}
-                <div className="w-24 h-24 flex items-center justify-center">
-                  <MochiSVG expression="happy" hideShadow={true} />
-                </div>
+                {/* Modal Box */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 15 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 15 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ willChange: "transform" }}
+                  className="bg-white border-4 border-[#FFDFC6] rounded-[36px] p-4 shadow-2xl relative w-full max-w-sm z-10 flex flex-col gap-4 items-center"
+                >
+                  {/* Close Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setSelectedVideo(null)}
+                    className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-[#FF7E53] border-2 border-white text-white flex items-center justify-center shadow-lg cursor-pointer hover:bg-[#ff693b] transition-colors"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </motion.button>
+
+                  {/* Video Player (Maintains original aspect ratio) */}
+                  <div className="w-full bg-black/5 rounded-[24px] overflow-hidden border-2 border-[#FFDFC6]/75 shadow-inner flex justify-center items-center">
+                    <video
+                      src={getOptimizedVideo(selectedVideo.cloudinaryUrl)}
+                      controls
+                      autoPlay
+                      className="max-h-[60vh] w-full h-auto object-contain rounded-[22px]"
+                    />
+                  </div>
+
+                  {/* Memory Information Card */}
+                  <div className="w-full text-center px-2 py-1 flex flex-col gap-2 items-center">
+                    <h3 className="font-fredoka text-lg font-bold text-[#5E4E46] leading-snug">
+                      {selectedVideo.title}
+                    </h3>
+                    {/* Cute Mochi SVG icon without shadow */}
+                    <div className="w-24 h-24 flex items-center justify-center">
+                      <MochiSVG expression="happy" hideShadow={true} />
+                    </div>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </div>
   );
 }
