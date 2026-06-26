@@ -65,17 +65,56 @@ export default function BottomNav({ activeTab, setActiveTab }: BottomNavProps) {
             }`}
           >
             <svg
-              viewBox="0 0 24 24"
-              width="24"
-              height="24"
+              viewBox="0 0 200 200"
+              width="28"
+              height="28"
               fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              xmlns="http://www.w3.org/2000/svg"
+              className="mt-0.5"
             >
-              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
+              {/* Mochi Body Outline */}
+              <path
+                d="M191.982 101.006C192.403 109.438 197.252 159.363 105.197 165.554C13.142 171.745 7.71601 117.207 8.02747 109.57C8.33894 101.932 16.9718 40.3176 97.5393 34.423C178.107 28.5283 191.56 92.5737 191.982 101.006Z"
+                stroke="currentColor"
+                strokeWidth="12"
+              />
+              
+              {/* Bottom shade (semi-transparent) */}
+              <mask
+                id="mochi-bottom-mask"
+                style={{ maskType: "alpha" }}
+                maskUnits="userSpaceOnUse"
+                x="8"
+                y="34"
+                width="185"
+                height="133"
+              >
+                <path
+                  d="M191.982 101.006C192.403 109.438 197.252 159.363 105.197 165.554C13.142 171.745 7.71601 117.207 8.02747 109.57C8.33894 101.932 16.9718 40.3176 97.5393 34.423C178.107 28.5283 191.56 92.5737 191.982 101.006Z"
+                  fill="white"
+                />
+              </mask>
+              <g mask="url(#mochi-bottom-mask)">
+                <path
+                  d="M104.231 172.497C58.6021 177.826 22.6691 148.272 22.6691 148.272C-9.08121 129.297 13.3176 132.683 13.3176 132.683C115.427 192.342 209.749 112.541 194.919 129.499C180.09 146.456 161.268 165.835 104.231 172.497Z"
+                  fill="currentColor"
+                  opacity="0.15"
+                />
+              </g>
+
+              {/* Mouth */}
+              <path
+                d="M100.04 94.7988C90.1367 90.4248 89.375 92.7577 89.375 93.9241C87.8514 99.1729 107.657 104.422 109.943 93.9241C108.419 88.6752 105.372 95.6736 100.04 94.7988Z"
+                fill="currentColor"
+              />
+
+              {/* Blush (Opacity adjusted to match theme) */}
+              <ellipse cx="57.7409" cy="99.9848" rx="10.8993" ry="9.17834" fill="currentColor" opacity="0.4" />
+              <ellipse cx="144.361" cy="99.9848" rx="10.3256" ry="9.17834" fill="currentColor" opacity="0.4" />
+
+              {/* Eyes */}
+              <ellipse cx="67.4929" cy="82.2018" rx="8.03104" ry="8.60469" fill="currentColor" />
+              <ellipse cx="132.889" cy="82.2018" rx="8.03104" ry="8.60469" fill="currentColor" />
             </svg>
           </motion.button>
           <span
