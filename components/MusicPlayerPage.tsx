@@ -16,7 +16,7 @@ interface LyricLine {
 
 export default function MusicPlayerPage({ onBack }: MusicPlayerPageProps) {
   const { playlist, currentTrack, isPlaying, playTrack, togglePlay, stopMusic, progress, duration, seek, nextTrack, prevTrack } = useMusic();
-  const [view, setView] = useState<"playlist" | "player">("playlist");
+  const [view, setView] = useState<"playlist" | "player" | "lyrics">("playlist");
   
   const [lyrics, setLyrics] = useState<LyricLine[]>([]);
   const lyricsContainerRef = useRef<HTMLDivElement>(null);
@@ -188,6 +188,7 @@ export default function MusicPlayerPage({ onBack }: MusicPlayerPageProps) {
 
   // --- LYRICS VIEW (SCROLLING FULL PAGE) ---
   if (view === "lyrics") {
+    if (!currentTrack) return null;
     return (
       <div className="w-full h-full relative z-50 text-[#5E4E46] overflow-hidden bg-[#FFEFE6] flex flex-col">
         {/* Background shadow/texture */}
