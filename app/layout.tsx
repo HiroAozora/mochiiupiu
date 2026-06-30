@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fredoka, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { MusicProvider } from "@/context/MusicContext";
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -32,7 +33,9 @@ export default function RootLayout({
     <html lang="id" className={`${fredoka.variable} ${plusJakartaSans.variable}`}>
       <body className="bg-[#FFF9F6] text-[#5E4E46] h-full w-full flex justify-center antialiased">
         <div className="w-full max-w-md bg-[#FFF9F6] h-full flex flex-col relative border-x border-[#FFE0D3]/30 shadow-sm overflow-hidden">
-          {children}
+          <MusicProvider>
+            {children}
+          </MusicProvider>
         </div>
       </body>
     </html>

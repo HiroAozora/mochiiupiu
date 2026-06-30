@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MochiSVG from "./MochiSVG";
+import MochiMusicSVG from "./MochiMusicSVG";
+import { useMusic } from "@/context/MusicContext";
 
 interface SanctuaryProps {
   isActive?: boolean;
@@ -22,6 +24,14 @@ export default function Sanctuary({
     "Halo Mochiupiu! Yuk main bareng Mochi 🧡",
   );
   const [showBubble, setShowBubble] = useState(true);
+
+  const { currentTrack, isPlaying, togglePlay, nextTrack, progress, duration } = useMusic();
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
   const returnTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeBubbleTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -241,20 +251,80 @@ export default function Sanctuary({
         transition={{ duration: 0.2 }}
         className="absolute top-0 left-0 right-0 p-4 pt-8 z-30 pointer-events-none flex items-center justify-between"
       >
-        {/* Left: Greeting badges */}
-        <div className="inline-flex flex-col items-start pointer-events-auto">
-          {/* Orange badge - subtitle */}
-          <div className="bg-[#FF7E53] border-2 border-white rounded-full px-4 py-1.5 shadow-md z-10 relative ml-3">
-            <span className="font-sans text-[10px] font-bold text-white uppercase tracking-wider">
-              mochi&apos;s room
-            </span>
-          </div>
-          {/* White card - greeting (overlaps upward into the orange badge) */}
-          <div className="bg-white/90 backdrop-blur-sm border-2 border-[#FFDFC6]/60 rounded-4xl px-5 py-3 shadow-sm -mt-2">
-            <h1 className="font-fredoka text-xl font-bold text-[#5E4E46]">
-              aloww mochiupiuu {"<3"}
-            </h1>
-          </div>
+        {/* Left: Greeting badges / Music Player */}
+        <div className="inline-flex flex-col items-start pointer-events-auto min-w-[200px]">
+          {isPlaying || currentTrack ? (
+            <motion.div
+              layout
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col w-full"
+            >
+              {/* Orange badge - status */}
+              <motion.div layout className="bg-[#FF7E53] border-2 border-white rounded-full px-4 py-1.5 shadow-md z-10 relative ml-3 self-start">
+                <span className="font-sans text-[10px] font-bold text-white uppercase tracking-wider">
+                  mochi lagi dengerin musik 🎧
+                </span>
+              </motion.div>
+              
+              {/* White card - mini player */}
+              <motion.div layout className="bg-white/90 backdrop-blur-sm border-2 border-[#FFDFC6]/60 rounded-[24px] p-3 shadow-sm -mt-2 w-full flex flex-col gap-2">
+                <div className="flex justify-between items-center w-full gap-2">
+                  {/* Album Cover */}
+                  <div className="w-9 h-9 rounded-full bg-[#FFEFE6] flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                    {currentTrack?.coverUrl ? (
+                      <img src={currentTrack.coverUrl} alt="Cover" className="w-full h-full object-cover" />
+                    ) : (
+                      <svg viewBox="0 0 24 24" fill="#FF7E53" className="w-5 h-5">
+                        <circle cx="8" cy="10" r="1.5" />
+                        <circle cx="16" cy="10" r="1.5" />
+                        <path d="M9.5 14c1.5 1.5 3.5 1.5 5 0" stroke="#FF7E53" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                      </svg>
+                    )}
+                  </div>
+                  {/* Text */}
+                  <div className="flex flex-col flex-1 min-w-0 pr-1">
+                    <span className="font-fredoka text-sm font-bold text-[#5E4E46] truncate leading-tight">{currentTrack?.title}</span>
+                    <span className="font-sans text-[10px] text-[#5E4E46]/60 truncate">{currentTrack?.artist}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={togglePlay} className="w-8 h-8 rounded-full bg-[#FF7E53] text-white flex items-center justify-center shadow-sm">
+                      {isPlaying ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                      )}
+                    </button>
+                    <button onClick={nextTrack} className="w-8 h-8 rounded-full bg-[#FFEFE6] text-[#FF7E53] flex items-center justify-center shadow-sm">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                    </button>
+                  </div>
+                </div>
+                {/* Progress bar */}
+                <div className="w-full h-1 bg-[#FFDFC6] rounded-full overflow-hidden mt-1">
+                  <div 
+                    className="h-full bg-[#FF7E53] rounded-full transition-all duration-300 ease-linear" 
+                    style={{ width: `${(progress / (duration || 1)) * 100}%` }} 
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+          ) : (
+            <motion.div layout className="flex flex-col">
+              {/* Orange badge - subtitle */}
+              <div className="bg-[#FF7E53] border-2 border-white rounded-full px-4 py-1.5 shadow-md z-10 relative ml-3 self-start">
+                <span className="font-sans text-[10px] font-bold text-white uppercase tracking-wider">
+                  mochi&apos;s room
+                </span>
+              </div>
+              {/* White card - greeting */}
+              <div className="bg-white/90 backdrop-blur-sm border-2 border-[#FFDFC6]/60 rounded-4xl px-5 py-3 shadow-sm -mt-2">
+                <h1 className="font-fredoka text-xl font-bold text-[#5E4E46]">
+                  aloww mochiupiuu {"<3"}
+                </h1>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* Right: Sleep Mode Toggle Button (Enlarged and centered) */}
@@ -325,11 +395,35 @@ export default function Sanctuary({
           </AnimatePresence>
 
           {/* Mochi SVG Component */}
-          <div className="z-20">
-            <MochiSVG
-              expression={mochiMood}
-              onInteraction={handleMochiInteraction}
-            />
+          <div className="z-20 relative w-full flex justify-center">
+            <AnimatePresence mode="wait">
+              {isPlaying || currentTrack ? (
+                <motion.div
+                  key="mochi-music"
+                  initial={{ opacity: 0, scale: 0.8, filter: "brightness(2)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "brightness(1)" }}
+                  exit={{ opacity: 0, scale: 0.8, filter: "brightness(2)" }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full flex justify-center"
+                >
+                  <MochiMusicSVG />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="mochi-normal"
+                  initial={{ opacity: 0, scale: 0.8, filter: "brightness(2)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "brightness(1)" }}
+                  exit={{ opacity: 0, scale: 0.8, filter: "brightness(2)" }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full flex justify-center"
+                >
+                  <MochiSVG
+                    expression={mochiMood}
+                    onInteraction={handleMochiInteraction}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import Sanctuary from "@/components/Sanctuary";
 import ForMochi from "@/components/ForMochi";
 import Memories from "@/components/Memories";
 import MochiSVG from "@/components/MochiSVG";
+import MusicDynamicIsland from "@/components/MusicDynamicIsland";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>("sanctuary");
@@ -157,6 +158,9 @@ export default function Home() {
         >
           <Memories />
         </motion.div>
+        
+        {/* Dynamic Island for Music Player */}
+        {!isGameActive && <MusicDynamicIsland activeTab={activeTab} />}
       </div>
 
       {/* Fixed top & bottom gradients - always visible to soften background edges */}

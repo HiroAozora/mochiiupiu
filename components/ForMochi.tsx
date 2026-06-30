@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AslabSimulator from "./AslabSimulator";
+import MusicPlayerPage from "./MusicPlayerPage";
 import Image from "next/image";
 
-type ActiveGame = null | "aslab";
+type ActiveGame = null | "aslab" | "music";
 type TransitionPhase = null | "loading";
 
 // Custom SVG icons for game cards
@@ -15,6 +16,19 @@ function AslabIcon() {
       <Image
         src="/mochi-aslab.svg"
         alt="Aslab"
+        fill
+        className="object-contain"
+      />
+    </div>
+  );
+}
+
+function MusicIcon() {
+  return (
+    <div className="relative w-14 h-14 scale-110">
+      <Image
+        src="/mochi-music.svg"
+        alt="Music"
         fill
         className="object-contain"
       />
@@ -371,9 +385,12 @@ interface ForMochiProps {
   onGameActiveChange?: (active: boolean) => void;
 }
 
+import { useMusic } from "@/context/MusicContext";
+
 export default function ForMochi({ onGameActiveChange }: ForMochiProps) {
   const [activeGame, setActiveGame] = useState<ActiveGame>(null);
   const [transitionPhase, setTransitionPhase] = useState<TransitionPhase>(null);
+  const { togglePlay, isPlaying } = useMusic();
 
   useEffect(() => {
     onGameActiveChange?.(activeGame !== null || transitionPhase !== null);
@@ -418,6 +435,13 @@ export default function ForMochi({ onGameActiveChange }: ForMochiProps) {
               onClick={handleStartAslab}
             />
             <GameCard
+              icon={<MusicIcon />}
+              title="Mochi dengerin musik"
+              description="Ayo mochi idupin musik biar ngga bosen"
+              tag={isPlaying ? "Sedang diputar..." : "Kesukaan Mochi"}
+              onClick={() => setActiveGame("music")}
+            />
+            <GameCard
               icon={<CoffeeIcon />}
               title="Coffee Break"
               description="Temenin Mochi istirahat sejenak dari kesibukan aslab-nya."
@@ -456,6 +480,9 @@ export default function ForMochi({ onGameActiveChange }: ForMochiProps) {
           >
             {activeGame === "aslab" && (
               <AslabSimulator onBack={() => setActiveGame(null)} />
+            )}
+            {activeGame === "music" && (
+              <MusicPlayerPage onBack={() => setActiveGame(null)} />
             )}
           </motion.div>
         )}
